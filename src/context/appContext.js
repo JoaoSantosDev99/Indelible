@@ -1,26 +1,9 @@
-import { ethers } from "ethers";
-import { createContext, useState } from "react";
+import { createContext } from "react";
 
 export const AppContext = createContext();
 
 const ContextProvider = ({ children }) => {
-  const contractAddress = "";
-  const contractABI = "";
-
-  const staticProvider = new ethers.providers.JsonRpcProvider(
-    "https://rpc.ankr.com/eth_goerli"
-  );
-
-  return (
-    <AppContext.Provider
-      value={{
-        contractAddress,
-        contractABI,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={{}}>{children}</AppContext.Provider>;
 };
 
 export default ContextProvider;
