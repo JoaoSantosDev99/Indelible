@@ -3,16 +3,16 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import ContextProvider from "./context/appContext";
-import { configureChains, createClient, goerli, WagmiConfig } from "wagmi";
+import { configureChains, createClient, mainnet, WagmiConfig } from "wagmi";
 import { Web3Modal } from "@web3modal/react";
 import { modalConnectors, walletConnectProvider } from "@web3modal/ethereum";
 import { EthereumClient } from "@web3modal/ethereum";
 
-const chains = [goerli];
+const chains = [mainnet];
 
 // Wagmi client
 const { provider } = configureChains(
-  [goerli],
+  [mainnet],
   [walletConnectProvider({ projectId: "2f1f53444758c9a32897f70a77b810ef" })]
 );
 

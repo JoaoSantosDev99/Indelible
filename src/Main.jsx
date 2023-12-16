@@ -1,64 +1,69 @@
 import { ethers } from "ethers";
 import abi from "./contracts/abi.json";
 import { useAccount, useSigner } from "wagmi";
-import { useState } from "react";
-import { fromBn } from "./utils";
-import { isAddress } from "ethers/lib/utils.js";
+import { useContext, useState } from "react";
+import { fromBn, toBn } from "./utils";
+import { AppContext } from "./context/appContext";
 
 const Main = () => {
   const [inputAdd, setInputAdd] = useState("");
   const [viewRoyalties, setViewRoyalties] = useState(false);
   const [viweClaimed, setViewClaimed] = useState(false);
+  const [searchId, setSearchId] = useState(0);
 
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { data: signer } = useSigner();
+  const { successToast, errorToast } = useContext(AppContext);
+
   let amount = 0;
 
-  const goerliProv = new ethers.providers.JsonRpcProvider(
-    "https://rpc.ankr.com/eth_goerli"
+  const ethProvider = new ethers.providers.JsonRpcProvider(
+    "https://rpc.ankr.com/eth"
   );
 
-  const indeAdd = "0x9baC80118ae432DBD5456490870a235ec9c07fE2";
-
-  const IndelibleCont = new ethers.Contract(indeAdd, abi, goerliProv);
+  const indelibleAdd = "0x20CE73Dc7E504c65f34D05bdC016353376A94354";
+  const IndelibleCont = new ethers.Contract(indelibleAdd, abi, ethProvider);
 
   const checkAdd = async () => {
-    if (!isConnected) return alert("Not Connected");
-    if (!isAddress(inputAdd)) {
-      alert("Not a valid Address");
-      return setInputAdd("");
-    }
+    if (!isConnected) return errorToast("Not Connected");
+    if (inputAdd.trim() === "") return errorToast("Invalid ID");
 
     try {
-      const checked = await IndelibleCont.royalties(inputAdd);
+      const checked = await IndelibleCont.claimableAmount(toBn(inputAdd));
+      setViewRoyalties(false);
+      setSearchId(inputAdd);
       amount = fromBn(checked);
 
       setViewRoyalties(true);
       setTimeout(() => {
         setViewRoyalties(false);
-      }, 5000);
+      }, 10000);
     } catch (error) {
       console.log(error);
     }
   };
 
   const claim = async () => {
-    if (!isConnected) return alert("Not Connected");
+    if (!isConnected) return errorToast("Not Connected");
+    if (inputAdd.trim() === "") return errorToast("Invalid ID");
 
-    const IndelibleCont = new ethers.Contract(indeAdd, abi, signer);
+    const IndelibleCont = new ethers.Contract(indelibleAdd, abi, signer);
 
     try {
-      const claim = await IndelibleCont.claim(address);
+      const claim = await IndelibleCont.claim(toBn(inputAdd));
       await claim.wait();
 
+      setSearchId(inputAdd);
       setViewClaimed(true);
 
       setTimeout(() => {
         setViewClaimed(false);
-      }, 5000);
+      }, 10000);
+
+      successToast("Successful Claim");
     } catch (error) {
       console.log(error);
-      alert("Account has no claimable royalty.");
+      errorToast("Account has no claimable royalty.");
     }
   };
 
@@ -68,19 +73,21 @@ const Main = () => {
 
   return (
     <section className="w-full flex justify-center">
-      <div className="h-screen flex-col gap-3 w-full text-[50px] text-white items-center max-w-screen-2xl flex justify-center">
+      <div className="px-[10px] h-screen flex-col gap-3 w-full text-[50px] text-white items-center max-w-screen-2xl flex justify-center">
         {/* Card */}
         <div className="shadow-xl flex pt-[32px] pb-[40px] px-[24px] gap-[32px] flex-col items-center max-w-[400px] rounded-[16px] w-full bg-[#212224] opacity-90">
-          <h2 className="text-[48px] uppercase">Check & Claim Royalty</h2>
+          <h2 className="sm:text-[48px] text-[40px] uppercase">
+            Check & Claim Royalty
+          </h2>
 
           <div>
             <h3 className="text-[16px] font-medium">Enter Wallet</h3>
             <input
               onChange={handleInputChange}
               value={inputAdd}
-              type="text"
+              type="number"
               min={0}
-              placeholder="0xkadknfsdf"
+              placeholder="42069"
               className="lowercase border border-[#5E6065] mb-[40px] h-[37px] max-w-[280px] placeholder:text-[16px] rounded-[8px] px-[16px] placeholder:text-[#5E6065] py-[8px] w-full outline-none flex items-center text-xl justify-center gap-2 bg-[#111111] text-gray-200"
             />
 
@@ -102,14 +109,14 @@ const Main = () => {
         </div>
 
         {viweClaimed && (
-          <div className="bg-[#36B37E] text-[24px] p-1 text-center max-w-[400px] w-full rounded-[16px]">
-            Successfully claimed!
+          <div className="bg-[#36B37E] text-[20px] p-1 text-center max-w-[400px] w-full rounded-[16px]">
+            Successfully claimed rewards for ID {searchId}
           </div>
         )}
 
         {viewRoyalties && (
-          <div className="bg-[#636363] text-[24px] p-1 text-center max-w-[400px] w-full rounded-[16px]">
-            Royalties: {amount}
+          <div className="bg-[#636363] text-[20px] p-1 text-center max-w-[400px] w-full rounded-[16px]">
+            Royalties for ID {searchId}: {amount}
           </div>
         )}
       </div>

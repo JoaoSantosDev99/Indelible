@@ -1,23 +1,28 @@
 [
-  { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
   {
-    "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_nftContractAddress",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "royalties",
-        "type": "uint256"
       }
     ],
-    "name": "ClaimerAdded",
-    "type": "event"
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "owner", "type": "address" }
+    ],
+    "name": "OwnableInvalidOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "account", "type": "address" }
+    ],
+    "name": "OwnableUnauthorizedAccount",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -39,89 +44,17 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+    "inputs": [],
+    "name": "NFTCollection",
+    "outputs": [
+      { "internalType": "contract IERC721", "name": "", "type": "address" }
     ],
-    "name": "PaymentReceived",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "PaymentReleased",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "royalties",
-        "type": "uint256"
-      }
-    ],
-    "name": "RoyaltyUpdated",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" },
-      { "internalType": "uint256", "name": "royalty_", "type": "uint256" }
-    ],
-    "name": "addClaimer",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address[]", "name": "accounts", "type": "address[]" },
-      { "internalType": "uint256[]", "name": "royalties_", "type": "uint256[]" }
-    ],
-    "name": "addClaimers",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address payable",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "uint256[]", "name": "_ids", "type": "uint256[]" }
     ],
     "name": "claim",
     "outputs": [],
@@ -129,11 +62,23 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "index", "type": "uint256" }
-    ],
-    "name": "claimer",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "claimableAmount",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "emergencyWithdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "isEligible",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -145,25 +90,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "address[]", "name": "accounts", "type": "address[]" },
-      { "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" }
-    ],
-    "name": "release",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
-    ],
-    "name": "released",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
@@ -171,17 +97,28 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
-    ],
-    "name": "royalties",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
+    "inputs": [],
+    "name": "selloutDistribute",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "totalReleased",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newNFTContractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setNFTCollection",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "tokenIds",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -197,20 +134,20 @@
   },
   {
     "inputs": [
-      { "internalType": "address[]", "name": "accounts", "type": "address[]" },
-      { "internalType": "uint256[]", "name": "royalties_", "type": "uint256[]" }
+      { "internalType": "uint256[]", "name": "_ids", "type": "uint256[]" },
+      { "internalType": "uint256[]", "name": "_amounts", "type": "uint256[]" }
     ],
-    "name": "updateRoyalties",
+    "name": "updateClaimableAmount",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" },
-      { "internalType": "uint256", "name": "royalty_", "type": "uint256" }
+      { "internalType": "uint256[]", "name": "ids", "type": "uint256[]" },
+      { "internalType": "bool", "name": "elegible", "type": "bool" }
     ],
-    "name": "updateRoyalty",
+    "name": "updateClaimableIds",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
