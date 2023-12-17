@@ -10,36 +10,46 @@ const Main = () => {
   const [viewRoyalties, setViewRoyalties] = useState(false);
   const [viweClaimed, setViewClaimed] = useState(false);
   const [searchId, setSearchId] = useState(0);
-
+  const [claimable, setClaimable] = useState(0);
   const { isConnected } = useAccount();
   const { data: signer } = useSigner();
   const { successToast, errorToast } = useContext(AppContext);
 
-  let amount = 0;
+  const sepoliaProvider = new ethers.providers.JsonRpcProvider(
+    "https://rpc.ankr.com/eth_sepolia"
+  );
 
   const ethProvider = new ethers.providers.JsonRpcProvider(
     "https://rpc.ankr.com/eth"
   );
 
-  const indelibleAdd = "0x20CE73Dc7E504c65f34D05bdC016353376A94354";
-  const IndelibleCont = new ethers.Contract(indelibleAdd, abi, ethProvider);
+  const indelibleAddTestnet = "0x139B23E0ed37168809E338C34a72650353DD5Fae";
+  const indelibleAddMainnet = "0x20CE73Dc7E504c65f34D05bdC016353376A94354";
+
+  const IndelibleCont = new ethers.Contract(
+    indelibleAddTestnet,
+    abi,
+    sepoliaProvider
+  );
 
   const checkAdd = async () => {
-    if (!isConnected) return errorToast("Not Connected");
     if (inputAdd.trim() === "") return errorToast("Invalid ID");
 
     try {
-      const checked = await IndelibleCont.claimableAmount(toBn(inputAdd));
+      const checked = await IndelibleCont.claimableAmount(inputAdd);
       setViewRoyalties(false);
       setSearchId(inputAdd);
-      amount = fromBn(checked);
+
+      console.log(ethers.utils.formatUnits(checked, 0), "ethers");
+
+      setClaimable(ethers.utils.formatUnits(checked, 0));
 
       setViewRoyalties(true);
       setTimeout(() => {
         setViewRoyalties(false);
       }, 10000);
     } catch (error) {
-      console.log(error);
+      console.log("test", error);
     }
   };
 
@@ -47,7 +57,7 @@ const Main = () => {
     if (!isConnected) return errorToast("Not Connected");
     if (inputAdd.trim() === "") return errorToast("Invalid ID");
 
-    const IndelibleCont = new ethers.Contract(indelibleAdd, abi, signer);
+    const IndelibleCont = new ethers.Contract(indelibleAddTestnet, abi, signer);
 
     try {
       const claim = await IndelibleCont.claim(toBn(inputAdd));
@@ -116,7 +126,7 @@ const Main = () => {
 
         {viewRoyalties && (
           <div className="bg-[#636363] text-[20px] p-1 text-center max-w-[400px] w-full rounded-[16px]">
-            Royalties for ID {searchId}: {amount}
+            Royalties for ID {searchId}: {claimable}
           </div>
         )}
       </div>

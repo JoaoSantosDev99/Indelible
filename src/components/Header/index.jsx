@@ -1,4 +1,4 @@
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchNetwork } from "wagmi";
 import { useWeb3Modal } from "@web3modal/react";
 import { shortAdd } from "../../utils";
 import logo from "../../Assets/logo.svg";
@@ -11,7 +11,9 @@ const Header = () => {
 
   const connectWallet = () => {
     try {
-      switchNetwork?.(1);
+      switchNetwork?.(11155111);
+      // switchNetwork?.(1);
+
       open();
     } catch (error) {
       console.log(error);

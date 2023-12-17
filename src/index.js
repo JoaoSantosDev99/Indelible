@@ -7,12 +7,13 @@ import { configureChains, createClient, mainnet, WagmiConfig } from "wagmi";
 import { Web3Modal } from "@web3modal/react";
 import { modalConnectors, walletConnectProvider } from "@web3modal/ethereum";
 import { EthereumClient } from "@web3modal/ethereum";
+import { sepolia } from "wagmi/chains";
 
-const chains = [mainnet];
+const chains = [mainnet, sepolia];
 
 // Wagmi client
 const { provider } = configureChains(
-  [mainnet],
+  [mainnet, sepolia],
   [walletConnectProvider({ projectId: "2f1f53444758c9a32897f70a77b810ef" })]
 );
 
