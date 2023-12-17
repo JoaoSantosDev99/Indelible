@@ -23,7 +23,7 @@ const Main = () => {
     "https://rpc.ankr.com/eth"
   );
 
-  const indelibleAddTestnet = "0x139B23E0ed37168809E338C34a72650353DD5Fae";
+  const indelibleAddTestnet = "0xacf70a506fa3b659d0c10e88e72a08a7cf654f34";
   const indelibleAddMainnet = "0x20CE73Dc7E504c65f34D05bdC016353376A94354";
 
   const IndelibleCont = new ethers.Contract(
